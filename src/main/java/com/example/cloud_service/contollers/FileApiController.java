@@ -7,6 +7,8 @@ import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.services.FileService;
 import org.hibernate.annotations.Parameter;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,14 +26,16 @@ public class FileApiController {
 
     @GetMapping("/list")
     List<FileDescriptionDTO> getAllFiles(
-            @RequestParam(value = "limit", defaultValue = "10") Integer limit
+            @RequestParam(value = "limit", defaultValue = "10") Integer limit,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         return service.getAllFiles(limit);
     }
 
     @GetMapping(value = "/file", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     byte[] getFile(
-            @RequestParam("filename") String filename
+            @RequestParam("filename") String filename,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         return service.getFileByFilename(filename);
     }
@@ -39,14 +43,16 @@ public class FileApiController {
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void postFile(
             @RequestParam("filename") String filename,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserDetails userDetails
     ) throws IOException {
         service.postFile(filename, file);
     }
 
     @DeleteMapping("/file")
     void deleteFile(
-            @RequestParam(value = "filename", required = true) String filename
+            @RequestParam(value = "filename", required = true) String filename,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         service.deleteFile(filename);
     }
@@ -54,7 +60,8 @@ public class FileApiController {
     @PutMapping("/file")
     void putFile(
             @RequestParam("filename") String filename,
-            @RequestBody FilePutRequest filePutRequest
+            @RequestBody FilePutRequest filePutRequest,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         service.updateFilename(filename, filePutRequest);
     }
