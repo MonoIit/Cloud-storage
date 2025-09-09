@@ -7,6 +7,7 @@ import com.example.cloud_service.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +35,16 @@ public class AuthApiController {
     }
 
     @PostMapping("/register")
-    void registerUser(
+    public void registerUser(
             @RequestBody UserCreds userCreds
     ) {
         userService.addNewUser(userCreds);
+    }
+
+    @PostMapping("/account")
+    public void deleteUser(
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+        userService.deleteAccount(userDetails);
     }
 }

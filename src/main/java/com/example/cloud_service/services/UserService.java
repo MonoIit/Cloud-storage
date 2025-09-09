@@ -7,6 +7,7 @@ import com.example.cloud_service.model.BadCredentials;
 import com.example.cloud_service.model.ConflictDataException;
 import com.example.cloud_service.model.UserCreds;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class UserService {
         }
     }
 
-    public void deleteAccount(String userId) {
-        usersRepository.deleteById(userId);
+    public void deleteAccount(UserDetails userDetails) {
+        usersRepository.deleteByLogin(userDetails.getUsername());
     }
 }

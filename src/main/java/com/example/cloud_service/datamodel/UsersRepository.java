@@ -10,4 +10,5 @@ public interface UsersRepository extends CrudRepository<UserDAO, String> {
 
     Optional<UserDAO> findFirstBySignature(String signature);
 
+    void deleteByLogin(String login);
 }
