@@ -2,6 +2,7 @@ package com.example.cloud_service.security;
 
 import java.io.IOException;
 
+import com.example.cloud_service.model.ResourseNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,41 +33,37 @@ public class RequestFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (path.equals("/login") || path.equals("/ping")) {
+        if (path.equals("/login") || path.equals("/ping") || path.equals("/register")) {
             chain.doFilter(request, response);
             return;
         }
 
         final String token = request.getHeader("auth-token");
 
-        UserDetails userDetails = null;
-        if (token != null) {
-            try {
-                String signature = tokenUtil.getSignature(token);
-                userDetails = userDetailsService.loadUserBySignature(signature);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get Token");
-            } catch (UsernameNotFoundException e) {
-                System.out.println("User not found!");
-            } catch (Exception e) {
-                System.out.println("Error: " + e);
+        if (token == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No token provided");
+            return;
+        }
+
+        try {
+            String signature = tokenUtil.getSignature(token);
+            UserDetails userDetails = userDetailsService.loadUserBySignature(signature);
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        } else {
-            System.out.println("No token provided");
+
+            chain.doFilter(request, response);
+
+        } catch (ResourseNotFoundException | UsernameNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Пользователь не найден");
+        } catch (IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не верный токен");
+        } catch (Exception e) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error");
         }
-
-        if (userDetails != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-
-            usernamePasswordAuthenticationToken
-                    .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-        }
-
-
-        chain.doFilter(request, response);
     }
 }

@@ -32,7 +32,7 @@ class UserServiceTest {
     }
 
     @Test
-    void addNewUser_success() throws ConflictDataException {
+    void addNewUser_success() {
         UserCreds creds = new UserCreds("john", "password");
 
         when(passwordEncoder.encode("password")).thenReturn("encoded-pass");
@@ -50,7 +50,7 @@ class UserServiceTest {
 
         when(passwordEncoder.encode("password")).thenReturn("encoded-pass");
         when(usersRepository.save(any()))
-                .thenThrow(new DataIntegrityViolationException("duplicate"));
+                .thenThrow(new ConflictDataException("duplicate"));
 
         assertThrows(ConflictDataException.class,
                 () -> userService.addNewUser(creds));

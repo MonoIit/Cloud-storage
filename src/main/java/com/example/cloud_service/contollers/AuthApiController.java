@@ -7,8 +7,8 @@ import com.example.cloud_service.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +41,7 @@ public class AuthApiController {
         userService.addNewUser(userCreds);
     }
 
-    @PostMapping("/account")
+    @DeleteMapping("/account")
     public void deleteUser(
             @AuthenticationPrincipal UserDetails userDetails
             ) {

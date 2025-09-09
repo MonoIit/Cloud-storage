@@ -2,13 +2,13 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.UserDAO;
 import com.example.cloud_service.datamodel.UsersRepository;
+import com.example.cloud_service.model.ResourseNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ class MyUserDetailsServiceTest {
         when(usersRepository.findFirstByLogin("unknown"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class,
+        assertThrows(ResourseNotFoundException.class,
                 () -> myUserDetailsService.loadUserByUsername("unknown"));
     }
 
@@ -75,7 +75,7 @@ class MyUserDetailsServiceTest {
         when(usersRepository.findFirstBySignature("bad-token"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class,
+        assertThrows(ResourseNotFoundException.class,
                 () -> myUserDetailsService.loadUserBySignature("bad-token"));
     }
 }

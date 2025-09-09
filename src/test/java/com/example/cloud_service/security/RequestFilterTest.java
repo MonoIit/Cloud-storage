@@ -56,7 +56,6 @@ class RequestFilterTest {
 
         requestFilter.doFilterInternal(request, response, filterChain);
 
-        verify(filterChain).doFilter(request, response);
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
@@ -89,7 +88,6 @@ class RequestFilterTest {
 
         requestFilter.doFilterInternal(request, response, filterChain);
 
-        verify(filterChain).doFilter(request, response);
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 }
