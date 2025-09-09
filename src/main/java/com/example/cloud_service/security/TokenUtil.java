@@ -14,9 +14,11 @@ import java.util.Base64;
 @Component
 public class TokenUtil implements Serializable {
     private final String HMAC_ALGO = "HmacSHA256";
+    private final String SECRET;
 
-    @Value("${signature.secret}")
-    private String SECRET;
+    public TokenUtil(@Value("${signature.secret}") String secret) {
+        this.SECRET = secret;
+    }
 
     public String generateToken() throws Exception {
         byte[] randomBytes = new byte[32];

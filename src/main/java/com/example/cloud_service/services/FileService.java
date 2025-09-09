@@ -2,7 +2,6 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.datamodel.FilesRepository;
-import com.example.cloud_service.model.FileDTO;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.ResourseNotFoundException;
