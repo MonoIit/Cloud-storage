@@ -57,7 +57,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
             chain.doFilter(request, response);
 
-        } catch (ResourseNotFoundException | UsernameNotFoundException e) {
+        } catch (UsernameNotFoundException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Пользователь не найден");
         } catch (IllegalArgumentException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не верный токен");

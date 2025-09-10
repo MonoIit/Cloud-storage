@@ -3,6 +3,8 @@ package com.example.cloud_service.contollers;
 import com.example.cloud_service.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,7 +20,7 @@ public class GlobalExceptionHandler {
             HttpServletResponse response,
             Exception exception
     ) throws IOException {
-        sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
+        sendResponse(response, HttpServletResponse.SC_NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(ConflictDataException.class)
@@ -34,7 +36,15 @@ public class GlobalExceptionHandler {
             HttpServletResponse response,
             Exception exception
     ) throws IOException {
-        sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, exception.getMessage());
+        sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    void handleUsernameNotFoundException (
+            HttpServletResponse response,
+            Exception exception
+    ) throws IOException {
+        sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
     }
 
     @ExceptionHandler(DataBaseException.class)

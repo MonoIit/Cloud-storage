@@ -125,8 +125,8 @@ class FileServiceTest {
 
         assertEquals(2, result.size());
         assertEquals("f1.txt", result.get(0).getFilename());
-        assertEquals(2, result.get(0).getSize()); // 16 / 8
+        assertEquals(16, result.get(0).getSize());
         assertEquals("f2.txt", result.get(1).getFilename());
-        assertEquals(3, result.get(1).getSize()); // 24 / 8
+        assertEquals(24, result.get(1).getSize());
     }
 }

@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class FileDescriptionDTO {
     private String filename;
-    private Integer size;
+    private Long size;
 }

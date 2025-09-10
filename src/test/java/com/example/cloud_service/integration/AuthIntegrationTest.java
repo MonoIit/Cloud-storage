@@ -2,6 +2,7 @@ package com.example.cloud_service.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.cloud_service.model.AuthOkResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @DisplayName("Integration tests for authentication endpoints")
 @ActiveProfiles("test")
 public class AuthIntegrationTest {
@@ -45,6 +45,11 @@ public class AuthIntegrationTest {
               "password": "password"
             }
         """;
+
+    @BeforeEach
+    public void cleanUp() {
+        jdbcTemplate.execute("DELETE FROM userdao");
+    }
 
     @Nested
     @DisplayName("/register")
@@ -92,7 +97,7 @@ public class AuthIntegrationTest {
         void shouldReturnUnauthorizedForInvalidCredentials() throws Exception {
             String invalidJson = """
                     {
-                      "email": "test-login",
+                      "login": "test-login",
                       "password": "wrong-password"
                     }
                 """;
@@ -103,7 +108,7 @@ public class AuthIntegrationTest {
             mockMvc.perform(post("/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(invalidJson))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isUnauthorized());
         }
     }
 

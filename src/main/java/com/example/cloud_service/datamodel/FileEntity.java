@@ -22,7 +22,7 @@ public class FileEntity {
 
     private String mimetype;
 
-    private Instant uploadedat;
+    private Instant uploadedate;
 
     @Column(columnDefinition = "bytea")
     private byte[] content;
@@ -31,7 +31,7 @@ public class FileEntity {
         this.id = UUID.randomUUID().toString();
         this.filename = file.getOriginalFilename();
         this.mimetype = file.getContentType();
-        this.uploadedat = Instant.now();
+        this.uploadedate = Instant.now();
         this.content = file.getBytes();
     }
 }

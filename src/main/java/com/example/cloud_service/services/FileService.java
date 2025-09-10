@@ -37,9 +37,9 @@ public class FileService {
     }
 
     public void postFile(String filename, MultipartFile file) throws IOException {
-        FileEntity uploudedFile = new FileEntity(file);
-        uploudedFile.setFilename(filename);
-        repo.save(uploudedFile);
+        FileEntity uploadedFile = new FileEntity(file);
+        uploadedFile.setFilename(filename);
+        repo.save(uploadedFile);
     }
 
     public void updateFilename(String filename, FilePutRequest request) {
@@ -54,7 +54,7 @@ public class FileService {
         List<FileEntity> found = repo.findAll(PageRequest.of(0, limit));
 
         return found.stream()
-                .map(e -> new FileDescriptionDTO(e.getFilename(), e.getContent().length / 8))
+                .map(e -> new FileDescriptionDTO(e.getFilename(), (long) e.getContent().length))
                 .toList();
     }
 }
