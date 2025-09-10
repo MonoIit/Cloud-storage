@@ -1,10 +1,17 @@
-FROM maven:3.9.5 AS build
+FROM gradle:8.9-jdk21 AS build
+
 WORKDIR /code
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
+
+COPY build.gradle settings.gradle gradlew* ./
+COPY gradle ./gradle
+
+RUN ./gradlew dependencies --no-daemon || return 0
+
+COPY . .
+
+RUN ./gradlew clean bootJar --no-daemon
 
 
 FROM eclipse-temurin:21-jre-jammy
-COPY --from=build /code/target/cloud-service-0.0.1-SNAPSHOT.jar /usr/bin/app-1.0.0.jar
-CMD ["java", "-jar", "/usr/bin/app-1.0.0.jar"]
+COPY --from=build /code/build/libs/*.jar app.jar
+CMD ["java", "-jar", "app.jar"]
