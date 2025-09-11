@@ -33,16 +33,11 @@ public class AuthService {
         UserDAO userDAO = usersRepository.findFirstByLogin(userCreds.getLogin())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userCreds.getLogin()));
 
-        String tokenPart;
-        if (userDAO.getSignature() == null) {
-            String[] token = tokenUtil.generateToken().split("\\.");
-            tokenPart = token[0];
-            String signature = token[1];
-            userDAO.setSignature(signature);
-            usersRepository.save(userDAO);
-        } else {
-            tokenPart = userDAO.getSignature();
-        }
+        String[] token = tokenUtil.generateToken().split("\\.");
+        String tokenPart = token[0];
+        String signature = token[1];
+        userDAO.setSignature(signature);
+        usersRepository.save(userDAO);
 
         return new AuthOkResponse().authToken(tokenPart);
     }

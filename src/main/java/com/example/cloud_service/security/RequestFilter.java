@@ -61,6 +61,7 @@ public class RequestFilter extends OncePerRequestFilter {
         } catch (IllegalArgumentException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Не верный токен");
         } catch (Exception e) {
+            System.out.println(e.toString());
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error");
         }
     }

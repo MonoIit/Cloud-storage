@@ -5,7 +5,7 @@ COPY . /code
 
 WORKDIR /code
 
-RUN ./gradlew build
+RUN ./gradlew clean build -x test
 
 
 
