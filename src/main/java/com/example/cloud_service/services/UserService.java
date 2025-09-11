@@ -6,7 +6,6 @@ import com.example.cloud_service.datamodel.UserDAO;
 import com.example.cloud_service.model.ConflictDataException;
 import com.example.cloud_service.model.UserCreds;
 import jakarta.transaction.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

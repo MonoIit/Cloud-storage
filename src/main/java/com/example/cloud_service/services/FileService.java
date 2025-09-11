@@ -2,13 +2,11 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.datamodel.FilesRepository;
-import com.example.cloud_service.datamodel.UserDAO;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.ResourseNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,14 +39,13 @@ public class FileService {
         uploadedFile.setFilename(filename);
 
         minIoService.uploadFile(uploadedFile.getFileKey(), file);
-
         repo.save(uploadedFile);
     }
 
     public void updateUserFileFilename(String userId, String filename, FilePutRequest request) {
         FileEntity file = getFileEntity(userId, filename);
-
         file.setFilename(request.getName());
+
         repo.save(file);
     }
 

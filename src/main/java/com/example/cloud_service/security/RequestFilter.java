@@ -2,7 +2,6 @@ package com.example.cloud_service.security;
 
 import java.io.IOException;
 
-import com.example.cloud_service.model.ResourseNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

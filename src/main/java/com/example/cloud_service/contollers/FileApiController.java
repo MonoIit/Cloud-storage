@@ -1,19 +1,14 @@
 package com.example.cloud_service.contollers;
 
-import com.example.cloud_service.datamodel.FileEntity;
-import com.example.cloud_service.model.FileDTO;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.MyUserDetails;
 import com.example.cloud_service.services.FileService;
-import org.hibernate.annotations.Parameter;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
