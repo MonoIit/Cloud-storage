@@ -10,10 +10,10 @@ import java.util.Optional;
 
 public interface FilesRepository extends CrudRepository<FileEntity, String> {
 
-    List<FileEntity> findAll(Pageable pageable);
+    List<FileEntity> findByUserId(String userId, Pageable pageable);
 
-    void deleteFileByFilename(String filename);
+    void deleteFileByUserIdAndFilename(String userId, String filename);
 
-    Optional<FileEntity> findByFilename(String filename);
+    Optional<FileEntity> findByUserIdAndFilename(String userId, String filename);
 
 }

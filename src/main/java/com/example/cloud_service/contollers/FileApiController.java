@@ -4,6 +4,7 @@ import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.model.FileDTO;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
+import com.example.cloud_service.model.MyUserDetails;
 import com.example.cloud_service.services.FileService;
 import org.hibernate.annotations.Parameter;
 import org.springframework.http.MediaType;
@@ -27,42 +28,42 @@ public class FileApiController {
     @GetMapping("/list")
     List<FileDescriptionDTO> getAllFiles(
             @RequestParam(value = "limit", defaultValue = "10") Integer limit,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal MyUserDetails userDetails
     ) {
-        return service.getAllFiles(limit);
+        return service.getLimitUserFiles(userDetails.getUserId(), limit);
     }
 
     @GetMapping(value = "/file", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     byte[] getFile(
             @RequestParam("filename") String filename,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        return service.getFileByFilename(filename);
+            @AuthenticationPrincipal MyUserDetails userDetails
+    ) throws Exception {
+        return service.getUserFileByFilename(userDetails.getUserId(), filename);
     }
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     void postFile(
             @RequestParam("filename") String filename,
             @RequestParam("file") MultipartFile file,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) throws IOException {
-        service.postFile(filename, file);
+            @AuthenticationPrincipal MyUserDetails userDetails
+    ) throws Exception {
+        service.uploadUserFile(userDetails.getUserId(), filename, file);
     }
 
     @DeleteMapping("/file")
     void deleteFile(
             @RequestParam(value = "filename", required = true) String filename,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
-        service.deleteFile(filename);
+            @AuthenticationPrincipal MyUserDetails userDetails
+    ) throws Exception {
+        service.deleteUserFile(userDetails.getUserId(), filename);
     }
 
     @PutMapping("/file")
     void putFile(
             @RequestParam("filename") String filename,
             @RequestBody FilePutRequest filePutRequest,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal MyUserDetails userDetails
     ) {
-        service.updateFilename(filename, filePutRequest);
+        service.updateUserFileFilename(userDetails.getUserId(), filename, filePutRequest);
     }
 }

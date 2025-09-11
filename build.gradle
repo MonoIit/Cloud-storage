@@ -29,12 +29,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.modelmapper:modelmapper:3.2.4'
+    // https://mvnrepository.com/artifact/io.minio/minio
+    implementation("io.minio:minio:8.5.17")
 	compileOnly 'org.projectlombok:lombok'
 	testImplementation 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.0'
+    testImplementation 'org.testcontainers:postgresql:1.19.0'
+    // https://mvnrepository.com/artifact/org.testcontainers/minio
+    testImplementation("org.testcontainers:minio:1.21.3")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,18 +21,23 @@ public class FileEntity {
 
     private String filename;
 
-    private String mimetype;
+    private String fileKey;
 
-    private Instant uploadedate;
+    private String contentType;
 
-    @Column(columnDefinition = "bytea")
-    private byte[] content;
+    private Long size;
 
-    public FileEntity(MultipartFile file) throws IOException {
+    private String userId;
+
+    private Instant uploadedDate;
+
+    public FileEntity(MultipartFile file, String userId) throws IOException {
         this.id = UUID.randomUUID().toString();
         this.filename = file.getOriginalFilename();
-        this.mimetype = file.getContentType();
-        this.uploadedate = Instant.now();
-        this.content = file.getBytes();
+        this.fileKey = UUID.randomUUID().toString();
+        this.contentType = file.getContentType();
+        this.size = file.getSize();
+        this.userId = userId;
+        this.uploadedDate = Instant.now();
     }
 }

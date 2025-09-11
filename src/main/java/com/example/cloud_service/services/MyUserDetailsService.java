@@ -2,6 +2,7 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.UserDAO;
 import com.example.cloud_service.datamodel.UsersRepository;
+import com.example.cloud_service.model.MyUserDetails;
 import com.example.cloud_service.model.ResourseNotFoundException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,6 @@ public class MyUserDetailsService implements UserDetailsService {
         UserDAO userDAO = usersRepository.findFirstBySignature(token)
                 .orElseThrow(() -> new ResourseNotFoundException(""));
 
-        return new User(userDAO.getLogin(), userDAO.getPasswordHash(), List.of());
+        return new MyUserDetails(userDAO.getLogin(), userDAO.getPasswordHash(), userDAO.getId());
     }
 }

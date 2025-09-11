@@ -2,59 +2,66 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.datamodel.FilesRepository;
+import com.example.cloud_service.datamodel.UserDAO;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.ResourseNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class FileService {
     private final FilesRepository repo;
-    private final ModelMapper mapper;
+    private final MinIoService minIoService;
 
-    public FileService(FilesRepository repo, ModelMapper mapper) {
-        this.repo = repo;
-        this.mapper = mapper;
-    }
 
     @Transactional
-    public void deleteFile(String filename) {
-        repo.deleteFileByFilename(filename);
+    public void deleteUserFile(String userId, String filename) throws Exception {
+        FileEntity file = getFileEntity(userId, filename);
+
+        repo.deleteFileByUserIdAndFilename(userId, filename);
+        minIoService.deleteFile(file.getFileKey());
     }
 
-    public byte[] getFileByFilename(String filename) {
-        FileEntity file = repo.findByFilename(filename)
-                .orElseThrow(() -> new ResourseNotFoundException("file " + filename));
+    public byte[] getUserFileByFilename(String userId, String filename) throws Exception {
+        FileEntity file = getFileEntity(userId, filename);
 
-        return file.getContent();
+        return minIoService.getFile(file.getFileKey());
     }
 
-    public void postFile(String filename, MultipartFile file) throws IOException {
-        FileEntity uploadedFile = new FileEntity(file);
+    public void uploadUserFile(String userId, String filename, MultipartFile file) throws Exception {
+        FileEntity uploadedFile = new FileEntity(file, userId);
         uploadedFile.setFilename(filename);
+
+        minIoService.uploadFile(uploadedFile.getFileKey(), file);
+
         repo.save(uploadedFile);
     }
 
-    public void updateFilename(String filename, FilePutRequest request) {
-        FileEntity file = repo.findByFilename(filename)
-                .orElseThrow(() -> new ResourseNotFoundException("file " + filename));
+    public void updateUserFileFilename(String userId, String filename, FilePutRequest request) {
+        FileEntity file = getFileEntity(userId, filename);
 
         file.setFilename(request.getName());
         repo.save(file);
     }
 
-    public List<FileDescriptionDTO> getAllFiles(Integer limit) {
-        List<FileEntity> found = repo.findAll(PageRequest.of(0, limit));
+    public List<FileDescriptionDTO> getLimitUserFiles(String userId, Integer limit) {
+        List<FileEntity> found = repo.findByUserId(userId, PageRequest.of(0, limit));
 
         return found.stream()
-                .map(e -> new FileDescriptionDTO(e.getFilename(), (long) e.getContent().length))
+                .map(e -> new FileDescriptionDTO(e.getFilename(), e.getSize()))
                 .toList();
+    }
+
+    private FileEntity getFileEntity(String userId, String filename) throws ResourseNotFoundException {
+        return repo.findByUserIdAndFilename(userId, filename)
+                .orElseThrow(() -> new ResourseNotFoundException("file not found: " + filename));
     }
 }
