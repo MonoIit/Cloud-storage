@@ -18,6 +18,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - run: chmod +x gradlew
       - run: ./gradlew unitTest
 
   integration-test:
@@ -31,6 +32,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - run: chmod +x gradlew
       - run: ./gradlew integrationTest
 
   build:
@@ -46,6 +48,7 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - run: chmod +x gradlew
       - run: ./gradlew build -x test
 
       - uses: actions/upload-artifact@v4
