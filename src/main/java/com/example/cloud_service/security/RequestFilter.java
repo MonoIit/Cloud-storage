@@ -1,6 +1,7 @@
 package com.example.cloud_service.security;
 
 import java.io.IOException;
+import java.util.Set;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class RequestFilter extends OncePerRequestFilter {
     private final TokenUtil tokenUtil;
     private final MyUserDetailsService userDetailsService;
+    private final Set<String> validPaths = Set.of(
+            "/login",
+            "/ping",
+            "/register",
+            "/actuator/prometheus",
+            "/actuator/health"
+    );
 
     @Override
     protected void doFilterInternal(
@@ -31,7 +39,7 @@ public class RequestFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (path.equals("/login") || path.equals("/ping") || path.equals("/register")) {
+        if (validPaths.contains(path)) {
             chain.doFilter(request, response);
             return;
         }

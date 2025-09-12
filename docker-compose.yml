@@ -32,5 +32,27 @@ services:
       - "9001:9001"
     command: server /data --console-address ":9001"
 
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yaml
+
+
+
+  grafana: # login: admin, password: admin
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
+
 volumes:
   arn-postgres-data:
+  prometheus-data:
+  grafana-data:
