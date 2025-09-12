@@ -28,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("Integration tests for fileAPI endpoints")
 @Testcontainers
+@Tag("integration")
 class FileIntegrationTest {
 
     @Autowired

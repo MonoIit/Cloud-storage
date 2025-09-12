@@ -48,6 +48,15 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+
+tasks.register("unitTest", Test) {
+    useJUnitPlatform {
+        excludeTags "integration"
+    }
+}
+
+tasks.register('integrationTest', Test) {
+    useJUnitPlatform {
+        includeTags "integration"
+    }
 }

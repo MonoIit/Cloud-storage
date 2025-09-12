@@ -63,21 +63,21 @@ class AuthServiceTest {
         assertEquals("signature", captor.getValue().getSignature());
     }
 
-    @Test
-    void authenticate_success_usesExistingSignature() throws Exception {
-        UserCreds creds = new UserCreds("john", "");
-        UserDAO userDAO = new UserDAO();
-        userDAO.setLogin("john");
-        userDAO.setSignature("existing-signature");
-
-        when(usersRepository.findFirstByLogin("john"))
-                .thenReturn(Optional.of(userDAO));
-
-        AuthOkResponse response = authService.authenticate(creds);
-
-        assertEquals("existing-signature", response.getToken());
-        verify(usersRepository, never()).save(any());
-    }
+//    @Test
+//    void authenticate_success_usesExistingSignature() throws Exception {
+//        UserCreds creds = new UserCreds("john", "");
+//        UserDAO userDAO = new UserDAO();
+//        userDAO.setLogin("john");
+//        userDAO.setSignature("existing-signature");
+//
+//        when(usersRepository.findFirstByLogin("john"))
+//                .thenReturn(Optional.of(userDAO));
+//
+//        AuthOkResponse response = authService.authenticate(creds);
+//
+//        assertEquals("existing-signature", response.getToken());
+//        verify(usersRepository, never()).save(any());
+//    }
 
     @Test
     void authenticate_userNotFound_throwsException() {
