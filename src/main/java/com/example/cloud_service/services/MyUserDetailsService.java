@@ -7,6 +7,7 @@ import com.example.cloud_service.model.ResourseNotFoundException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,13 +23,13 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) {
         UserDAO userDAO = usersRepository.findFirstByLogin(login)
-                .orElseThrow(() -> new ResourseNotFoundException("User not found with username: " + login));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + login));
         return new User(userDAO.getLogin(), userDAO.getPasswordHash(), List.of());
     }
 
     public UserDetails loadUserBySignature(String token) {
         UserDAO userDAO = usersRepository.findFirstBySignature(token)
-                .orElseThrow(() -> new ResourseNotFoundException(""));
+                .orElseThrow(() -> new UsernameNotFoundException(""));
 
         return new MyUserDetails(userDAO.getLogin(), userDAO.getPasswordHash(), userDAO.getId());
     }
