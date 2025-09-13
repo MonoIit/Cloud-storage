@@ -2,6 +2,7 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.datamodel.FilesRepository;
+import com.example.cloud_service.model.ConflictDataException;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.ResourseNotFoundException;
@@ -35,8 +36,13 @@ public class FileService {
     }
 
     public void uploadUserFile(String userId, String filename, MultipartFile file) throws Exception {
+        if (repo.findByUserIdAndFilename(userId, filename).isPresent()) {
+            throw new ConflictDataException("file already exists:" + filename);
+        }
+
         FileEntity uploadedFile = new FileEntity(file, userId);
         uploadedFile.setFilename(filename);
+
 
         minIoService.uploadFile(uploadedFile.getFileKey(), file);
         repo.save(uploadedFile);

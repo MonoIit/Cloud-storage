@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
@@ -50,7 +51,7 @@ class MyUserDetailsServiceTest {
         when(usersRepository.findFirstByLogin("unknown"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourseNotFoundException.class,
+        assertThrows(UsernameNotFoundException.class,
                 () -> myUserDetailsService.loadUserByUsername("unknown"));
     }
 
@@ -75,7 +76,7 @@ class MyUserDetailsServiceTest {
         when(usersRepository.findFirstBySignature("bad-token"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(ResourseNotFoundException.class,
+        assertThrows(UsernameNotFoundException.class,
                 () -> myUserDetailsService.loadUserBySignature("bad-token"));
     }
 }

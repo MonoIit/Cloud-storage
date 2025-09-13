@@ -2,6 +2,7 @@ package com.example.cloud_service.services;
 
 import com.example.cloud_service.datamodel.FileEntity;
 import com.example.cloud_service.datamodel.FilesRepository;
+import com.example.cloud_service.model.ConflictDataException;
 import com.example.cloud_service.model.FileDescriptionDTO;
 import com.example.cloud_service.model.FilePutRequest;
 import com.example.cloud_service.model.ResourseNotFoundException;
@@ -91,6 +92,21 @@ class FileServiceTest {
         FileEntity saved = captor.getValue();
         assertEquals("test.txt", saved.getFilename());
         assertEquals(userId, saved.getUserId());
+    }
+
+    @Test
+    void uploadUserFile_duplicate_throwsExeption() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "test.txt", "text/plain", "hello".getBytes()
+        );
+        FileEntity exestingFile = new FileEntity();
+
+        when(repo.findByUserIdAndFilename(anyString(), anyString()))
+                .thenReturn(Optional.of(exestingFile));
+
+
+        assertThrows(ConflictDataException.class,
+                () -> fileService.uploadUserFile(userId, "test.txt", file));
     }
 
     @Test
