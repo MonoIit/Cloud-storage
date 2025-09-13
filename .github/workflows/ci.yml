@@ -23,7 +23,14 @@ jobs:
 
   integration-test:
     runs-on: ubuntu-latest
-
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mydb
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      MINIO_URL: http://localhost:9000
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+      SIGNATURE_SECRET: mySecret123
     steps:
       - uses: actions/checkout@v4
 
