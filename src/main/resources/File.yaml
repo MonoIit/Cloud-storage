@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: local server
+paths:
+  /ping:
+    get:
+      responses:
+        "200":
+          description: OK
+
+  /file:
+    get:
+      security:
+        - authToken: [ ]
+
+      parameters:
+        - name: filename
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: string
+                format: byte
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "404":
+          $ref: '#/components/schemas/ResourceNotFound'
+
+    put:
+      security:
+        - authToken: [ ]
+
+      parameters:
+        - name: filename
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FilePutRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "404":
+          $ref: '#/components/schemas/ResourceNotFound'
+
+    post:
+      security:
+        - authToken: [ ]
+
+      parameters:
+        - name: filename
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "200":
+          description: OK
+        "400":
+          $ref: '#/components/responses/400BadInput'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "409":
+          description: "File with user`s filename already exists"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+    delete:
+      security:
+        - authToken: [ ]
+
+      parameters:
+        - name: filename
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          $ref: '#/components/responses/400BadInput'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+
+
+  /list:
+    get:
+      security:
+        - authToken: [ ]
+
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FileDescriptionDTO"
+        "400":
+          $ref: '#/components/responses/400BadInput'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /register:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreds"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "400":
+          $ref: '#/components/responses/400BadInput'
+        "409":
+          description: "Already existed user"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /account:
+    delete:
+      description: "Deletes current logged in user"
+      security:
+        - authToken: [ ]
+
+      responses:
+        "200":
+          description: OK
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+  /login:
+    post:
+      description: "Authorization method"
+
+      requestBody:
+        $ref: "#/components/schemas/UserCreds"
+
+      responses:
+        "200":
+          description: "authToken of the authenticated user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthOkResponse"
+
+        "401":
+          $ref: '#/components/responses/InvalidCredentials'
+
+        "400":
+          $ref: '#/components/responses/400BadInput'
+
+
+  /logout:
+    post:
+      description: "Deactivate user`s authToken"
+      security:
+        - authToken: [ ]
+
+      responses:
+        "200":
+          description: OK
+
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+
+
+
+
+
+
+components:
+  schemas:
+    FilePutRequest:
+      type: object
+      properties:
+        name:
+          type: string
+    UserCreds:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+    AuthOkResponse:
+      type: object
+      properties:
+        auth-token:
+          type: string
+    FileDescriptionDTO:
+      type: object
+      properties:
+        filename:
+          type: string
+        size:
+          type: integer
+          format: int64
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+
+
+  responses:
+    ResourceNotFound:
+      description: Resource not found
+
+    UnauthorizedError:
+      description: Access token is missing or invalid
+
+    InvalidCredentials:
+      description: Invalid login or password
+
